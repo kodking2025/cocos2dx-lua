@@ -1,0 +1,50 @@
+//设置剪切板
++(NSString*)setClipboard:(NSDictionary *) dict
+{
+        NSLog(@"setClipboard");
+        NSString* copyContext = [dict objectForKey:@"k"];
+        UIPasteboard *pasteboard = [UIPasteboard generalPasteboard];
+        pasteboard.string = copyContext;//改变剪切板的内容
+        return @"1";
+}
+//读取剪切板
++(NSString*)getClipboard
+{
+    NSLog(@"获取剪切板内容");
+    NSString* str = [[UIPasteboard generalPasteboard] string];
+    return str;
+}
+
+//lua
+--将内容复制到剪切板
+function copy2clipboard(str)
+        local function callCackFun(result)
+                local str  = result =="0" and "复制失败" or "复制成功"
+                toastMsg(str);
+        end 
+        --调用Java并回调
+        if cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_ANDROID then 
+            local luaj = require "cocos.cocos2d.luaj" --引入luaj
+            local is_ok, result = luaj.callStaticMethod("org/cocos2dx/lua/AppActivity", "setClipboard", {callCackFun,str}, "(ILjava/lang/String;)Ljava/lang/String;")
+            if is_ok then
+                print("#####################call java static function Ok") 
+            end
+        elseif cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_IPHONE or
+                cc.Application:getInstance():getTargetPlatform() == cc.PLATFORM_OS_IPAD then
+            local luaoc = require "cocos.cocos2d.luaoc" --引入luaj
+            local args = {
+                ["k"] = str
+            }
+
+            local is_ok, result = luaoc.callStaticMethod("AppController", "setClipboard", args );
+            if is_ok then
+                print("#####################call oc static function Ok"..result) 
+                callCackFun(result); 
+            else
+                print("#####################call oc static function error")
+                callCackFun("0"); 
+            end     
+        else 
+            toastMsg("暂未实现..."..str);
+        end 
+end
