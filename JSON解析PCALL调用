@@ -1,0 +1,9 @@
+--测试json解析
+    local JSON = require("json")   --全局json解析模块 
+    local status,msg = pcall(function() return JSON.decode("{'MsgType':4,,'SubMsgType':1,'Msg':'[1,2]'}")end);
+    dump(status);
+    if status then
+        dump(msg);
+    else
+        dump("解析error")
+    end
