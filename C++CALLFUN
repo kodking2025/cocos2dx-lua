@@ -1,0 +1,61 @@
+// ConsoleApplication1.cpp : 定义控制台应用程序的入口点。
+//
+
+#include "stdafx.h"
+#include "stdio.h"
+
+class obj{
+public:
+	int x = 1;
+	obj(int x){
+		this->x = x;
+	};
+	int add2(int a, int b){
+		printf("1ddddddddddddddddddddddddddd,%d\r\n", this->x);
+		printf("1ddddddddddddddddddddddddddd,%d,%d\r\n",a,b);
+		this->x = 888;
+		return 8;
+	}
+}; 
+ 
+extern "C" {
+	void add(int a, int b){
+		printf("ddddddddddddddddddddddddddd,%d\r\n" , b);
+	} 
+	int _tmain(int argc, _TCHAR* argv[])
+	{
+		
+		obj o(2); 
+		obj o2(4);
+		int(obj::*pf1)(int, int);  //
+		int(*pf4)(int, int, void*, void*);
+		 
+		pf1 =  &obj::add2;  
+		void* x = (void*)&pf1;
+		int* x1 = (int*)x;
+		//printf("%x", *x1);//
+		pf4 = (int(*)(int, int, void*, void* ))(*x1);
+	 
+		int a = 111;
+		int b = 222;  
+		//参数a,b, &o 为输入参数 ,&o2不知道干嘛的
+		int a1 = pf4(a, b, &o, &o2);;
+		printf("##,%d\r\n", o2.x);
+		//printf("##,%d\r\n", o.x);
+		//printf("##,%d\r\n", o2.x);
+		//printf("##,%d\r\n", o.x);
+		//(*hh.*pf1)(1, 2);
+		//pf3(&oj,a, b);
+		//(obj2.*pf1)(0, 0);
+		//(o.*pf1)(0,0);
+		//pf1(1,5);
+		//////////////////////////
+		//void(*pf)(int, int);
+	
+		//pf = add;
+		//add(1,1);
+		//pf(1, 2);
+		getchar();
+		return 0;
+	}
+}
